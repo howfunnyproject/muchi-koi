@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>Muchi Koi — Find a Cobbler in Dhaka</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Hind+Siliguri:wght@400;500;600&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root {
+      --bg:         #08090f;
+      --bg2:        #0e1019;
+      --surface:    #12141f;
+      --card:       #181b28;
+      --card2:      #1e2235;
+      --border:     rgba(255,255,255,.07);
+      --border2:    rgba(255,255,255,.12);
+      --gold:       #d4952a;
+      --gold-light: #f0b84a;
+      --gold-glow:  rgba(212,149,42,.18);
+      --gold-dim:   rgba(212,149,42,.08);
+      --text:       #eeeaf2;
+      --text2:      #a8a4b4;
+      --text3:      #6a667a;
+      --green:      #3ecf8e;
+      --red:        #f87171;
+      --radius-sm:  8px;
+      --radius-md:  14px;
+      --radius-lg:  22px;
+      --radius-xl:  32px;
+      --hh:         68px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── HEADER ─────────────────────────────── */
+    header {
+      position: sticky; top: 0; z-index: 900;
+      height: var(--hh);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 clamp(16px, 4vw, 40px);
+      background: rgba(8,9,15,.88);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo { display: flex; flex-direction: column; gap: 2px; }
+    .logo-name {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: clamp(1.2rem, 3.5vw, 1.55rem);
+      color: var(--gold-light);
+      letter-spacing: -.01em; line-height: 1;
+    }
+    .logo-tag {
+      font-size: clamp(.58rem, 1.4vw, .68rem);
+      font-weight: 500; color: var(--text3);
+      letter-spacing: .12em; text-transform: uppercase;
+    }
+    .header-right { display: flex; align-items: center; gap: 10px; }
+    .lang-pill {
+      display: flex; background: var(--card);
+      border: 1px solid var(--border2); border-radius: 50px; padding: 3px; gap: 2px;
+    }
+    .lang-btn {
+      background: transparent; border: none; color: var(--text3);
+      padding: 5px 14px; border-radius: 50px; cursor: pointer;
+      font-size: .74rem; font-weight: 600;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      letter-spacing: .05em; transition: all .2s ease;
+    }
+    .lang-btn.active { background: var(--gold); color: #08090f; box-shadow: 0 2px 10px rgba(212,149,42,.3); }
+    .lang-btn:not(.active):hover { color: var(--text); }
+
+    /* ── HERO ───────────────────────────────── */
+    #hero {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: clamp(40px,8vh,80px) clamp(20px,5vw,60px);
+      text-align: center; position: relative; overflow: hidden;
+      min-height: calc(100dvh - var(--hh));
+    }
+    #hero::before {
+      content: ''; position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 70% 55% at 50% 15%, rgba(212,149,42,.11) 0%, transparent 65%),
+        radial-gradient(ellipse 45% 45% at 82% 75%, rgba(80,50,200,.05) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 50% at 12% 65%, rgba(20,160,120,.04) 0%, transparent 55%);
+      pointer-events: none;
+    }
+    #hero::after {
+      content: ''; position: absolute; inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,.032) 1px, transparent 1px);
+      background-size: 30px 30px; pointer-events: none;
+      mask-image: radial-gradient(ellipse 75% 75% at 50% 50%, black 20%, transparent 78%);
+      -webkit-mask-image: radial-gradient(ellipse 75% 75% at 50% 50%, black 20%, transparent 78%);
+    }
+    .hero-inner {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column; align-items: center;
+      max-width: 620px; width: 100%;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--gold-dim); border: 1px solid rgba(212,149,42,.2);
+      border-radius: 50px; padding: 6px 16px 6px 10px;
+      font-size: .7rem; font-weight: 600; color: var(--gold-light);
+      letter-spacing: .1em; text-transform: uppercase;
+      margin-bottom: 28px; animation: fadeUp .6s ease both;
+    }
+    .badge-dot {
+      width: 7px; height: 7px; background: var(--gold);
+      border-radius: 50%; animation: pulse 2.2s ease infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.45;transform:scale(1.6)} }
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.4rem, 8vw, 4.4rem);
+      font-weight: 700; line-height: 1.08;
+      color: var(--text); letter-spacing: -.025em;
+      margin-bottom: 18px; animation: fadeUp .65s .1s ease both;
+    }
+    .hero-title em { font-style: italic; color: var(--gold-light); }
+    .hero-title.bn {
+      font-family: 'Hind Siliguri', sans-serif;
+      font-size: clamp(2rem, 6.5vw, 3.6rem);
+      font-weight: 600; letter-spacing: -.01em; line-height: 1.15;
+    }
+    .hero-sub {
+      font-size: clamp(.88rem, 2.2vw, 1.02rem);
+      color: var(--text2); line-height: 1.8;
+      max-width: 440px; margin-bottom: 36px;
+      animation: fadeUp .65s .2s ease both;
+    }
+    .hero-sub.bn { font-family: 'Hind Siliguri', sans-serif; font-size: clamp(.95rem,2.5vw,1.08rem); line-height: 1.85; }
+
+    /* Hero buttons row */
+    .hero-btns {
+      display: flex; gap: 14px; flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeUp .65s .3s ease both;
+    }
+
+    .find-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: linear-gradient(135deg, #e0a030 0%, #b86c10 100%);
+      color: #060608; border: none;
+      padding: clamp(13px,2.5vw,16px) clamp(26px,5vw,40px);
+      border-radius: var(--radius-xl);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: clamp(.88rem, 2vw, 1rem);
+      font-weight: 700; cursor: pointer; letter-spacing: .01em;
+      box-shadow: 0 0 0 1px rgba(212,149,42,.25), 0 8px 28px rgba(212,149,42,.24), 0 2px 6px rgba(0,0,0,.4);
+      transition: transform .22s ease, box-shadow .22s ease, filter .22s ease;
+      position: relative; overflow: hidden;
+    }
+    .find-btn::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(160deg, rgba(255,255,255,.2) 0%, transparent 55%);
+      pointer-events: none;
+    }
+    .find-btn:hover { transform: translateY(-3px) scale(1.02); filter: brightness(1.07); box-shadow: 0 0 0 1px rgba(212,149,42,.45), 0 14px 36px rgba(212,149,42,.34), 0 4px 12px rgba(0,0,0,.5); }
+    .find-btn:active { transform: translateY(-1px) scale(1); }
+    .find-btn.bn { font-family: 'Hind Siliguri', sans-serif; }
+
+    .add-btn-hero {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: transparent;
+      border: 1px solid var(--border2);
+      color: var(--text2);
+      padding: clamp(13px,2.5vw,16px) clamp(26px,5vw,40px);
+      border-radius: var(--radius-xl);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: clamp(.88rem, 2vw, 1rem);
+      font-weight: 600; cursor: pointer; letter-spacing: .01em;
+      transition: all .22s ease;
+    }
+    .add-btn-hero:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+    .add-btn-hero.bn { font-family: 'Hind Siliguri', sans-serif; }
+
+    /* Stats */
+    .stats {
+      display: flex; gap: clamp(22px, 5vw, 56px);
+      margin-top: clamp(40px,6vh,64px);
+      padding-top: clamp(22px,4vh,34px);
+      border-top: 1px solid var(--border);
+      animation: fadeUp .65s .4s ease both;
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.5rem,4vw,2.1rem);
+      font-weight: 700; color: var(--gold-light);
+      line-height: 1; margin-bottom: 6px;
+    }
+    .stat-label {
+      font-size: clamp(.62rem,1.4vw,.7rem); font-weight: 500;
+      color: var(--text3); letter-spacing: .09em;
+      text-transform: uppercase; white-space: nowrap;
+    }
+    .stat-label.bn { font-family:'Hind Siliguri',sans-serif; text-transform:none; letter-spacing:0; font-size:.78rem; }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+    /* ── MAP VIEW ───────────────────────────── */
+    #map-view { display:none; flex-direction:column; height:calc(100dvh - var(--hh)); }
+    #map-toolbar {
+      display:flex; align-items:center; gap:10px;
+      padding:10px clamp(12px,3vw,20px);
+      background:var(--surface); border-bottom:1px solid var(--border);
+      flex-wrap:wrap;
+    }
+    .back-btn {
+      display:inline-flex; align-items:center; gap:6px;
+      background:transparent; border:1px solid var(--border2);
+      color:var(--text2); padding:8px 16px; border-radius:50px;
+      cursor:pointer; font-size:.8rem; font-weight:500;
+      font-family:'Plus Jakarta Sans',sans-serif;
+      transition:all .2s; white-space:nowrap; flex-shrink:0;
+    }
+    .back-btn:hover { border-color:var(--gold); color:var(--gold); }
+    #search-wrap { flex:1; min-width:140px; position:relative; }
+    #search-wrap::before {
+      content:'🔍'; position:absolute; left:13px; top:50%;
+      transform:translateY(-50%); font-size:.78rem; pointer-events:none;
+    }
+    #search-bar {
+      width:100%; background:var(--card); border:1px solid var(--border2);
+      color:var(--text); padding:9px 14px 9px 36px; border-radius:50px;
+      font-size:.84rem; font-family:'Plus Jakarta Sans',sans-serif;
+      outline:none; transition:border-color .2s, box-shadow .2s;
+    }
+    #search-bar:focus { border-color:var(--gold); box-shadow:0 0 0 3px var(--gold-glow); }
+    #search-bar::placeholder { color:var(--text3); }
+    .locate-btn {
+      display:inline-flex; align-items:center; gap:6px;
+      background:linear-gradient(135deg,#e0a030 0%,#b86c10 100%);
+      border:none; color:#060608; padding:9px 18px; border-radius:50px;
+      cursor:pointer; font-weight:700; font-size:.8rem;
+      font-family:'Plus Jakarta Sans',sans-serif;
+      transition:filter .2s,transform .15s; white-space:nowrap; flex-shrink:0;
+    }
+    .locate-btn:hover { filter:brightness(1.1); transform:translateY(-1px); }
+    .add-map-btn {
+      display:inline-flex; align-items:center; gap:6px;
+      background:transparent; border:1px solid var(--gold);
+      color:var(--gold); padding:8px 16px; border-radius:50px;
+      cursor:pointer; font-weight:600; font-size:.8rem;
+      font-family:'Plus Jakarta Sans',sans-serif;
+      transition:all .2s; white-space:nowrap; flex-shrink:0;
+    }
+    .add-map-btn:hover { background:var(--gold); color:#060608; }
+    #map { flex:1; }
+
+    /* ── POPUP ──────────────────────────────── */
+    .leaflet-popup-content-wrapper {
+      background:var(--card2) !important; border:1px solid var(--border2) !important;
+      border-radius:var(--radius-md) !important;
+      box-shadow:0 16px 56px rgba(0,0,0,.75),0 2px 8px rgba(0,0,0,.4) !important;
+      padding:0 !important;
+    }
+    .leaflet-popup-tip { background:var(--card2) !important; }
+    .leaflet-popup-content { margin:0 !important; width:auto !important; min-width:240px; max-width:300px; }
+    .leaflet-popup-close-button { color:var(--text3) !important; font-size:1.1rem !important; top:12px !important; right:14px !important; transition:color .2s; }
+    .leaflet-popup-close-button:hover { color:var(--text) !important; }
+
+    .popup-inner { padding:18px 20px 14px; }
+    .popup-photos {
+      display:flex; gap:6px; margin-bottom:14px;
+      overflow-x:auto; padding-bottom:2px;
+    }
+    .popup-photos img {
+      width:90px; height:68px; object-fit:cover;
+      border-radius:8px; flex-shrink:0;
+      border:1px solid var(--border2);
+    }
+    .popup-header {
+      display:flex; align-items:flex-start; justify-content:space-between;
+      gap:10px; margin-bottom:10px; padding-right:18px;
+    }
+    .popup-name { font-family:'Playfair Display',serif; font-size:1.05rem; font-weight:700; color:var(--text); line-height:1.2; }
+    .popup-name-bn { font-family:'Hind Siliguri',sans-serif; font-size:.8rem; color:var(--gold-light); margin-top:3px; }
+    .popup-rating {
+      display:flex; align-items:center; gap:3px;
+      background:var(--gold-dim); border:1px solid rgba(212,149,42,.2);
+      border-radius:50px; padding:3px 9px; flex-shrink:0;
+    }
+    .popup-rating .star { color:var(--gold); font-size:.73rem; }
+    .popup-rating .score { color:var(--gold-light); font-size:.7rem; font-weight:700; }
+    .popup-divider { height:1px; background:var(--border); margin:8px 0; }
+    .popup-row {
+      display:flex; align-items:flex-start; gap:8px;
+      font-size:.78rem; color:var(--text2); margin-bottom:5px; line-height:1.45;
+    }
+    .popup-row .icon { flex-shrink:0; }
+    .popup-row a { color:var(--gold-light); text-decoration:none; font-weight:500; }
+    .popup-row a:hover { text-decoration:underline; }
+    .popup-tags { display:flex; flex-wrap:wrap; gap:5px; margin-top:8px; }
+    .popup-tag {
+      background:rgba(255,255,255,.05); border:1px solid var(--border2);
+      color:var(--text2); border-radius:50px; padding:3px 10px;
+      font-size:.66rem; font-weight:500;
+    }
+    .popup-new-badge {
+      display:inline-block; background:rgba(62,207,142,.12);
+      border:1px solid rgba(62,207,142,.25); color:var(--green);
+      border-radius:50px; padding:2px 9px; font-size:.62rem;
+      font-weight:600; letter-spacing:.06em; margin-bottom:8px;
+    }
+
+    /* ── MODAL ──────────────────────────────── */
+    #modal-overlay {
+      display:none; position:fixed; inset:0;
+      background:rgba(4,5,10,.82);
+      backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+      z-index:9000; align-items:center; justify-content:center; padding:16px;
+    }
+    #modal-overlay.open { display:flex; }
+
+    .modal {
+      background:var(--card); border:1px solid var(--border2);
+      border-radius:var(--radius-lg);
+      padding:clamp(20px,5vw,32px);
+      width:min(520px,100%); max-height:92dvh;
+      overflow-y:auto; box-shadow:0 32px 80px rgba(0,0,0,.75);
+      scrollbar-width:thin; scrollbar-color:var(--border2) transparent;
+    }
+    .modal::-webkit-scrollbar { width:4px; }
+    .modal::-webkit-scrollbar-thumb { background:var(--border2); border-radius:4px; }
+
+    .modal-title { font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:700; color:var(--text); margin-bottom:4px; }
+    .modal-title.bn { font-family:'Hind Siliguri',sans-serif; font-size:1.3rem; }
+    .modal-sub { font-size:.82rem; color:var(--text3); margin-bottom:22px; }
+    .modal-sub.bn { font-family:'Hind Siliguri',sans-serif; }
+
+    /* Location detected strip */
+    #loc-strip {
+      display:none; align-items:center; gap:8px;
+      background:rgba(62,207,142,.08); border:1px solid rgba(62,207,142,.2);
+      border-radius:var(--radius-sm); padding:10px 14px; margin-bottom:16px;
+      font-size:.8rem; color:var(--green);
+    }
+    #loc-strip.show { display:flex; }
+
+    .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:13px; }
+    .form-grid .full { grid-column:1/-1; }
+    .form-group { display:flex; flex-direction:column; gap:5px; }
+    .form-label {
+      font-size:.7rem; font-weight:600; color:var(--text3);
+      letter-spacing:.08em; text-transform:uppercase;
+    }
+    .form-label.bn { font-family:'Hind Siliguri',sans-serif; text-transform:none; letter-spacing:0; font-size:.76rem; }
+    .opt-tag {
+      font-size:.62rem; font-weight:400;
+      color:var(--text3); text-transform:none; letter-spacing:0; margin-left:4px;
+    }
+    .form-group input, .form-group select, .form-group textarea {
+      background:var(--bg2); border:1px solid var(--border2);
+      color:var(--text); padding:10px 13px; border-radius:var(--radius-sm);
+      font-size:.86rem; font-family:'Plus Jakarta Sans',sans-serif;
+      outline:none; resize:vertical; transition:border-color .2s,box-shadow .2s;
+      -webkit-appearance:none; appearance:none;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color:var(--gold); box-shadow:0 0 0 3px var(--gold-glow);
+    }
+    .form-group input::placeholder, .form-group textarea::placeholder { color:var(--text3); }
+    .form-group select option { background:var(--card2); }
+
+    /* Photo upload */
+    .photo-upload-area {
+      border:2px dashed var(--border2); border-radius:var(--radius-md);
+      padding:20px; text-align:center; cursor:pointer;
+      transition:border-color .2s, background .2s;
+      position:relative; overflow:hidden;
+    }
+    .photo-upload-area:hover { border-color:var(--gold); background:var(--gold-dim); }
+    .photo-upload-area input[type=file] {
+      position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%;
+    }
+    .photo-upload-icon { font-size:1.8rem; margin-bottom:6px; }
+    .photo-upload-text { font-size:.82rem; color:var(--text2); }
+    .photo-upload-hint { font-size:.7rem; color:var(--text3); margin-top:3px; }
+
+    .photo-previews { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+    .photo-preview-item { position:relative; }
+    .photo-preview-item img { width:72px; height:72px; object-fit:cover; border-radius:8px; border:1px solid var(--border2); }
+    .photo-remove {
+      position:absolute; top:-6px; right:-6px;
+      background:var(--red); color:#fff; border:none;
+      border-radius:50%; width:18px; height:18px;
+      font-size:.65rem; cursor:pointer; display:flex;
+      align-items:center; justify-content:center; font-weight:700;
+    }
+
+    /* Upload progress */
+    .upload-progress {
+      display:none; align-items:center; gap:10px;
+      background:var(--gold-dim); border:1px solid rgba(212,149,42,.2);
+      border-radius:var(--radius-sm); padding:10px 14px; margin-top:12px;
+    }
+    .upload-progress.show { display:flex; }
+    .progress-bar-wrap { flex:1; background:var(--border2); border-radius:50px; height:4px; }
+    .progress-bar { height:4px; background:var(--gold); border-radius:50px; transition:width .3s; }
+    .progress-text { font-size:.75rem; color:var(--gold-light); white-space:nowrap; }
+
+    .modal-divider { height:1px; background:var(--border); margin:18px 0; }
+    .modal-actions { display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap; }
+
+    .btn-cancel {
+      background:transparent; border:1px solid var(--border2);
+      color:var(--text2); padding:10px 22px; border-radius:50px;
+      cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif;
+      font-size:.84rem; font-weight:500; transition:all .2s;
+    }
+    .btn-cancel:hover { border-color:var(--text2); color:var(--text); }
+
+    .btn-submit {
+      background:linear-gradient(135deg,#e0a030 0%,#b86c10 100%);
+      border:none; color:#060608; padding:10px 26px; border-radius:50px;
+      cursor:pointer; font-weight:700;
+      font-family:'Plus Jakarta Sans',sans-serif;
+      font-size:.84rem; transition:filter .2s,transform .15s;
+      display:flex; align-items:center; gap:8px;
+    }
+    .btn-submit:hover { filter:brightness(1.1); transform:translateY(-1px); }
+    .btn-submit:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+
+    /* Spinner */
+    .spinner {
+      width:14px; height:14px; border:2px solid rgba(0,0,0,.2);
+      border-top-color:#060608; border-radius:50%;
+      animation:spin .6s linear infinite; display:none;
+    }
+    .spinner.show { display:block; }
+    @keyframes spin { to{transform:rotate(360deg)} }
+
+    /* ── TOAST ──────────────────────────────── */
+    #toast {
+      position:fixed; bottom:clamp(24px,5vh,40px); left:50%;
+      transform:translateX(-50%) translateY(12px);
+      background:var(--card2); border:1px solid var(--border2);
+      color:var(--text); padding:11px 22px; border-radius:50px;
+      font-size:.82rem; font-weight:500; z-index:99999;
+      opacity:0; pointer-events:none;
+      transition:opacity .28s ease,transform .28s ease;
+      white-space:nowrap; box-shadow:0 8px 32px rgba(0,0,0,.5);
+      max-width:90vw; text-align:center;
+    }
+    #toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+    /* ── LOADING OVERLAY ────────────────────── */
+    #loading-overlay {
+      display:none; position:fixed; inset:0;
+      background:rgba(8,9,15,.9); z-index:99998;
+      align-items:center; justify-content:center;
+      flex-direction:column; gap:16px;
+    }
+    #loading-overlay.show { display:flex; }
+    .loading-spinner {
+      width:40px; height:40px; border:3px solid var(--border2);
+      border-top-color:var(--gold); border-radius:50%;
+      animation:spin .7s linear infinite;
+    }
+    .loading-text { color:var(--text2); font-size:.9rem; }
+
+    /* ── RESPONSIVE ─────────────────────────── */
+    @media(max-width:480px) {
+      .form-grid { grid-template-columns:1fr; }
+      .form-grid .full { grid-column:1; }
+      .stats { gap:18px; }
+      .hero-btns { flex-direction:column; align-items:stretch; }
+      .find-btn, .add-btn-hero { justify-content:center; }
+    }
+    @media(max-width:360px) { .locate-btn span { display:none; } }
+
+    /* Leaflet dark */
+    .leaflet-control-attribution { background:rgba(8,9,15,.75) !important; color:var(--text3) !important; font-size:.62rem !important; }
+    .leaflet-control-attribution a { color:var(--text2) !important; }
+    .leaflet-control-zoom a { background:var(--card2) !important; color:var(--text) !important; border-color:var(--border2) !important; }
+    .leaflet-control-zoom a:hover { background:var(--card) !important; color:var(--gold-light) !important; }
+  </style>
+</head>
+<body>
+
+<!-- ════════ HEADER ════════ -->
+<header>
+  <div class="logo">
+    <span class="logo-name">Muchi Koi</span>
+    <span class="logo-tag" id="logo-tag">Find a cobbler anytime</span>
+  </div>
+  <div class="header-right">
+    <div class="lang-pill">
+      <button class="lang-btn" id="btn-en">EN</button>
+      <button class="lang-btn active" id="btn-bn">বাং</button>
+    </div>
+  </div>
+</header>
+
+<!-- ════════ HERO ════════ -->
+<section id="hero">
+  <div class="hero-inner">
+    <div class="hero-badge"><span class="badge-dot"></span><span id="badge-text">Live · Dhaka</span></div>
+    <h1 class="hero-title" id="h-title">Find a <em>cobbler</em><br/>anytime.</h1>
+    <p class="hero-sub" id="h-sub">Find the nearest cobbler in Dhaka — instantly, for free.<br/>No more wandering the streets with a broken sole.</p>
+    <div class="hero-btns">
+      <button class="find-btn" id="find-btn">
+        <span>📍</span><span id="find-btn-text">Find Cobblers Near Me</span>
+      </button>
+      <button class="add-btn-hero" id="add-btn-hero">
+        <span>＋</span><span id="add-btn-hero-text">Add a Cobbler</span>
+      </button>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-num" id="stat-cobblers">—</div><div class="stat-label" id="stat-l1">Cobblers</div></div>
+      <div class="stat"><div class="stat-num">∞</div><div class="stat-label" id="stat-l2">Always Free</div></div>
+      <div class="stat"><div class="stat-num">🇧🇩</div><div class="stat-label" id="stat-l3">Dhaka City</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ MAP VIEW ════════ -->
+<section id="map-view">
+  <div id="map-toolbar">
+    <button class="back-btn" id="back-btn">← <span id="back-text">Back</span></button>
+    <div id="search-wrap">
+      <input id="search-bar" type="text" placeholder="Search area…" oninput="window._filterMarkers(this.value)"/>
+    </div>
+    <button class="locate-btn" id="locate-btn">📍 <span id="locate-text">Locate Me</span></button>
+    <button class="add-map-btn" id="add-map-btn">＋ <span id="add-map-text">Add Cobbler</span></button>
+  </div>
+  <div id="map"></div>
+</section>
+
+<!-- ════════ MODAL ════════ -->
+<div id="modal-overlay">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">Add a Cobbler</div>
+    <div class="modal-sub" id="modal-sub">Help your community. Takes 2 minutes.</div>
+
+    <!-- Location strip -->
+    <div id="loc-strip">
+      <span>📍</span>
+      <span id="loc-strip-text">Location captured!</span>
+    </div>
+
+    <div class="form-grid">
+      <!-- Name -->
+      <div class="form-group full">
+        <label class="form-label" id="lbl-name">Cobbler's Name</label>
+        <input type="text" id="f-name" placeholder="e.g. Rahim Mia"/>
+      </div>
+      <!-- Phone -->
+      <div class="form-group full">
+        <label class="form-label" id="lbl-phone">Phone Number</label>
+        <input type="tel" id="f-phone" placeholder="01XXXXXXXXX"/>
+      </div>
+      <!-- Area -->
+      <div class="form-group full">
+        <label class="form-label" id="lbl-area">Location Description</label>
+        <input type="text" id="f-area" placeholder="e.g. Mirpur-10, near bus stand, under the tree"/>
+      </div>
+      <!-- Services -->
+      <div class="form-group full">
+        <label class="form-label" id="lbl-services">Services <span class="opt-tag" id="lbl-opt1">(optional)</span></label>
+        <input type="text" id="f-services" placeholder="Sole repair, polish, stitching…"/>
+      </div>
+      <!-- Work hours -->
+      <div class="form-group">
+        <label class="form-label" id="lbl-hours">Work Hours <span class="opt-tag" id="lbl-opt2">(optional)</span></label>
+        <input type="text" id="f-hours" placeholder="9am – 7pm"/>
+      </div>
+      <!-- Work days -->
+      <div class="form-group">
+        <label class="form-label" id="lbl-days">Work Days <span class="opt-tag" id="lbl-opt3">(optional)</span></label>
+        <input type="text" id="f-days" placeholder="Sat – Thu"/>
+      </div>
+      <!-- Photos -->
+      <div class="form-group full">
+        <label class="form-label" id="lbl-photos">Photos <span class="opt-tag" id="lbl-opt4">(1–2 photos, max 5MB each)</span></label>
+        <div class="photo-upload-area" id="upload-area">
+          <input type="file" id="f-photos" accept="image/*" multiple/>
+          <div class="photo-upload-icon">📷</div>
+          <div class="photo-upload-text" id="upload-text">Tap to add photos</div>
+          <div class="photo-upload-hint" id="upload-hint">1 photo of cobbler + 1 of surroundings</div>
+        </div>
+        <div class="photo-previews" id="photo-previews"></div>
+        <!-- Progress -->
+        <div class="upload-progress" id="upload-progress">
+          <div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
+          <span class="progress-text" id="progress-text">Uploading…</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-divider"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="cancel-btn">Cancel</button>
+      <button class="btn-submit" id="submit-btn">
+        <span id="submit-text">Submit</span>
+        <div class="spinner" id="submit-spinner"></div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ TOAST ════════ -->
+<div id="toast"></div>
+
+<!-- ════════ LOADING ════════ -->
+<div id="loading-overlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text" id="loading-text">Loading cobblers…</div>
+</div>
+
+<!-- ════════ SCRIPTS ════════ -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp }        from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+  import { getAnalytics }         from "https://www.gstatic.com/firebasejs/12.10.0/firebase-analytics.js";
+  import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp }
+                                  from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+
+  /* ── CONFIG ───────────────────────────────── */
+  const firebaseConfig = {
+    apiKey:            "AIzaSyDOSUl4rr6SjJmnjdTHYmB2gzsvTpdEPUQ",
+    authDomain:        "muchi-koi.firebaseapp.com",
+    projectId:         "muchi-koi",
+    storageBucket:     "muchi-koi.firebasestorage.app",
+    messagingSenderId: "535483166463",
+    appId:             "1:535483166463:web:67bc895ed86010da1a26ca",
+    measurementId:     "G-V9LK92LB68"
+  };
+  const CLOUDINARY_CLOUD  = "dd2znqqod";
+  const CLOUDINARY_PRESET = "muchi_koi_upload";
+
+  const app       = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const db        = getFirestore(app);
+
+  /* ── STATE ────────────────────────────────── */
+  let cobblers     = [];
+  let map, markersLayer = [], userMarker = null;
+  let lang         = 'bn';
+  let gpsLat       = null, gpsLng = null;
+  let selectedFiles = [];
+
+  /* ── LANGUAGE ─────────────────────────────── */
+  const T = {
+    en: {
+      logoTag:"Find a cobbler anytime", badge:"Live · Dhaka",
+      title:`Find a <em>cobbler</em><br/>anytime.`, titleCls:"hero-title",
+      sub:"Find the nearest cobbler in Dhaka — instantly, for free.<br/>No more wandering the streets with a broken sole.", subCls:"hero-sub",
+      findBtn:"Find Cobblers Near Me", findBtnCls:"find-btn",
+      addHero:"Add a Cobbler", addHeroCls:"add-btn-hero",
+      sl1:"Cobblers", sl2:"Always Free", sl3:"Dhaka City",
+      back:"Back", locate:"Locate Me", addMap:"Add Cobbler",
+      mTitle:"Add a Cobbler", mTitleCls:"modal-title",
+      mSub:"Help your community. Takes 2 minutes.", mSubCls:"modal-sub",
+      lName:"Cobbler's Name", lPhone:"Phone Number", lThana:"Thana",
+      lArea:"Location Description", lSvc:"Services", lHours:"Work Hours",
+      lDays:"Work Days", lPhotos:"Photos",
+      opt:"(optional)", photoOpt:"(1–2 photos, max 5MB each)",
+      uploadTxt:"Tap to add photos", uploadHint:"1 photo of cobbler + 1 of surroundings",
+      cancel:"Cancel", submit:"Submit",
+      locStrip:"📍 Location captured! Pin placed on map.",
+      locating:"Getting your location…", locFail:"Location unavailable.",
+      searchPH:"Search area (e.g. Mirpur, Dhanmondi…)",
+      toastOk:"✓ Cobbler added! Visible to everyone now.",
+      toastErr:"Please fill Name, Phone, and Location.",
+      toastPhotoErr:"Max 2 photos allowed.",
+      toastSizeErr:"Each photo must be under 5MB.",
+      uploading:"Uploading photos…", saving:"Saving cobbler…",
+      loadingTxt:"Loading cobblers…",
+    },
+    bn: {
+      logoTag:"যেকোনো সময় মুচি খুঁজুন", badge:"লাইভ · ঢাকা",
+      title:`যেকোনো সময়<br/><em>মুচি</em> খুঁজুন।`, titleCls:"hero-title bn",
+      sub:"ঢাকার যেকোনো জায়গা থেকে কাছের মুচি খুঁজুন মুহূর্তেই।<br/>সম্পূর্ণ বিনামূল্যে।", subCls:"hero-sub bn",
+      findBtn:"কাছের মুচি খুঁজুন", findBtnCls:"find-btn bn",
+      addHero:"মুচি যোগ করুন", addHeroCls:"add-btn-hero bn",
+      sl1:"মুচি", sl2:"বিনামূল্যে", sl3:"ঢাকা শহর",
+      back:"ফিরে যান", locate:"আমার অবস্থান", addMap:"মুচি যোগ করুন",
+      mTitle:"মুচির তথ্য যোগ করুন", mTitleCls:"modal-title bn",
+      mSub:"আপনার এলাকার মুচিকে যোগ করুন। মাত্র ২ মিনিট।", mSubCls:"modal-sub bn",
+      lName:"নাম", lPhone:"ফোন নম্বর", lThana:"থানা",
+      lArea:"অবস্থানের বিবরণ", lSvc:"কাজের ধরন", lHours:"কাজের সময়",
+      lDays:"কাজের দিন", lPhotos:"ছবি",
+      opt:"(ঐচ্ছিক)", photoOpt:"(১–২টি ছবি, সর্বোচ্চ ৫MB)",
+      uploadTxt:"ছবি যোগ করতে ট্যাপ করুন", uploadHint:"মুচির ১টি + আশেপাশের ১টি ছবি",
+      cancel:"বাতিল", submit:"জমা দিন",
+      locStrip:"📍 অবস্থান পাওয়া গেছে!",
+      locating:"অবস্থান নির্ণয় হচ্ছে…", locFail:"অবস্থান পাওয়া যায়নি।",
+      searchPH:"এলাকা খুঁজুন (যেমন মিরপুর, ধানমন্ডি…)",
+      toastOk:"✓ মুচি যোগ হয়েছে! সবাই এখন দেখতে পাচ্ছে।",
+      toastErr:"নাম, ফোন ও এলাকা পূরণ করুন।",
+      toastPhotoErr:"সর্বোচ্চ ২টি ছবি দেওয়া যাবে।",
+      toastSizeErr:"প্রতিটি ছবি ৫MB-এর কম হতে হবে।",
+      uploading:"ছবি আপলোড হচ্ছে…", saving:"তথ্য সংরক্ষণ হচ্ছে…",
+      loadingTxt:"মুচির তালিকা লোড হচ্ছে…",
+    }
+  };
+
+  function setLang(l) {
+    lang = l;
+    document.getElementById('btn-en').classList.toggle('active', l==='en');
+    document.getElementById('btn-bn').classList.toggle('active', l==='bn');
+    const t = T[l];
+    document.getElementById('logo-tag').textContent   = t.logoTag;
+    document.getElementById('badge-text').textContent = t.badge;
+    const ht = document.getElementById('h-title');
+    ht.innerHTML = t.title; ht.className = t.titleCls;
+    const hs = document.getElementById('h-sub');
+    hs.innerHTML = t.sub; hs.className = t.subCls;
+    document.getElementById('find-btn-text').textContent  = t.findBtn;
+    document.getElementById('find-btn').className         = t.findBtnCls;
+    document.getElementById('add-btn-hero-text').textContent = t.addHero;
+    document.getElementById('add-btn-hero').className     = t.addHeroCls;
+    document.getElementById('stat-l1').textContent = t.sl1;
+    document.getElementById('stat-l2').textContent = t.sl2;
+    document.getElementById('stat-l3').textContent = t.sl3;
+    document.getElementById('back-text').textContent  = t.back;
+    document.getElementById('locate-text').textContent= t.locate;
+    document.getElementById('add-map-text').textContent= t.addMap;
+    const mt=document.getElementById('modal-title'); mt.textContent=t.mTitle; mt.className=t.mTitleCls;
+    const ms=document.getElementById('modal-sub');   ms.textContent=t.mSub;   ms.className=t.mSubCls;
+    document.getElementById('lbl-name').textContent    = t.lName;
+    document.getElementById('lbl-phone').textContent   = t.lPhone;
+    document.getElementById('lbl-thana').textContent   = t.lThana;
+    document.getElementById('lbl-area').textContent    = t.lArea;
+    document.getElementById('lbl-services').textContent= t.lSvc;
+    document.getElementById('lbl-hours').textContent   = t.lHours;
+    document.getElementById('lbl-days').textContent    = t.lDays;
+    document.getElementById('lbl-photos').textContent  = t.lPhotos;
+    document.getElementById('lbl-opt1').textContent    = t.opt;
+    document.getElementById('lbl-opt2').textContent    = t.opt;
+    document.getElementById('lbl-opt3').textContent    = t.opt;
+    document.getElementById('lbl-opt4').textContent    = t.photoOpt;
+    document.getElementById('upload-text').textContent = t.uploadTxt;
+    document.getElementById('upload-hint').textContent = t.uploadHint;
+    document.getElementById('cancel-btn').textContent  = t.cancel;
+    document.getElementById('submit-text').textContent = t.submit;
+    document.getElementById('search-bar').placeholder  = t.searchPH;
+    document.getElementById('loading-text').textContent= t.loadingTxt;
+  }
+  window.setLang = setLang;
+
+  /* ── LOAD COBBLERS FROM FIRESTORE ─────────── */
+  async function loadCobblers() {
+    document.getElementById('loading-overlay').classList.add('show');
+    try {
+      const q   = query(collection(db,'cobblers'), orderBy('createdAt','desc'));
+      const snap= await getDocs(q);
+      cobblers  = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+      document.getElementById('stat-cobblers').textContent = cobblers.length;
+    } catch(e) {
+      console.error(e);
+    } finally {
+      document.getElementById('loading-overlay').classList.remove('show');
+    }
+  }
+  loadCobblers();
+
+  /* ── MAP ──────────────────────────────────── */
+  window.openMap = async function() {
+    document.getElementById('hero').style.display     = 'none';
+    document.getElementById('map-view').style.display = 'flex';
+    if (!map) {
+      map = L.map('map').setView([23.7806,90.4193],12);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{
+        attribution:'© <a href="https://www.openstreetmap.org/">OSM</a> © <a href="https://carto.com/">CARTO</a>',
+        maxZoom:19
+      }).addTo(map);
+      await loadCobblers();
+      renderMarkers(cobblers);
+      setTimeout(()=>map.invalidateSize(),120);
+    }
+  };
+
+  window.closeMap = function() {
+    document.getElementById('map-view').style.display = 'none';
+    document.getElementById('hero').style.display     = 'flex';
+  };
+
+  function pinIcon(hi) {
+    const c=hi?'#f0b84a':'#d4952a', sh=hi?'0 0 14px rgba(240,184,74,.75)':'0 3px 10px rgba(0,0,0,.55)';
+    return L.divIcon({
+      className:'',
+      html:`<svg width="26" height="34" viewBox="0 0 26 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M13 0C5.82 0 0 5.82 0 13c0 9.75 13 21 13 21S26 22.75 26 13C26 5.82 20.18 0 13 0z"
+          fill="${c}" style="filter:drop-shadow(${sh})"/>
+        <circle cx="13" cy="13" r="4.5" fill="rgba(0,0,0,.3)"/>
+      </svg>`,
+      iconSize:[26,34], iconAnchor:[13,34], popupAnchor:[0,-36]
+    });
+  }
+
+  function popupHtml(c) {
+    const tags   = (c.services||[]).map(s=>`<span class="popup-tag">${s}</span>`).join('');
+    const photos = (c.photos||[]).map(u=>`<img src="${u}" loading="lazy"/>`).join('');
+    const newBadge = c.isNew ? `<div class="popup-new-badge">✦ NEW</div>` : '';
+    const hours = c.workHours ? `<div class="popup-row"><span class="icon">🕐</span><span>${c.workHours}${c.workDays?' · '+c.workDays:''}</span></div>` : '';
+    // Directions button — opens Google Maps from user's location to cobbler
+    const dirUrl = `https://www.google.com/maps/dir/?api=1&destination=${c.lat},${c.lng}&travelmode=walking`;
+    return `<div class="popup-inner">
+      ${newBadge}
+      ${photos ? `<div class="popup-photos">${photos}</div>` : ''}
+      <div class="popup-header">
+        <div>
+          <div class="popup-name">${c.name}</div>
+          ${c.nameBn ? `<div class="popup-name-bn">${c.nameBn}</div>` : ''}
+        </div>
+        <div class="popup-rating"><span class="star">★</span><span class="score">${c.rating||'New'}</span></div>
+      </div>
+      <div class="popup-divider"></div>
+      <div class="popup-row"><span class="icon">📍</span><span>${c.area||c.thana||''}</span></div>
+      <div class="popup-row"><span class="icon">📞</span><a href="tel:${c.phone}">${c.phone}</a></div>
+      ${hours}
+      ${tags ? `<div class="popup-tags">${tags}</div>` : ''}
+      <a href="${dirUrl}" target="_blank" style="
+        display:flex;align-items:center;justify-content:center;gap:7px;
+        margin-top:12px;padding:9px 0;
+        background:linear-gradient(135deg,#e0a030,#b86c10);
+        color:#060608;border-radius:50px;
+        font-family:'Plus Jakarta Sans',sans-serif;
+        font-size:.78rem;font-weight:700;
+        text-decoration:none;letter-spacing:.02em;
+        box-shadow:0 2px 10px rgba(212,149,42,.3);
+      ">🗺️ Get Directions</a>
+    </div>`;
+  }
+
+  function renderMarkers(list) {
+    markersLayer.forEach(m=>map.removeLayer(m));
+    markersLayer=[];
+    list.forEach(c=>{
+      if(!c.lat||!c.lng) return;
+      const m=L.marker([c.lat,c.lng],{icon:pinIcon(false)}).addTo(map).bindPopup(popupHtml(c),{maxWidth:310});
+      m.on('mouseover',()=>{m.setIcon(pinIcon(true)); m.openPopup();});
+      m.on('mouseout', ()=>m.setIcon(pinIcon(false)));
+      markersLayer.push(m);
+    });
+    document.getElementById('stat-cobblers').textContent = cobblers.length;
+  }
+
+  window.filterMarkers = function(q) {
+    const t=q.toLowerCase().trim();
+    renderMarkers(t ? cobblers.filter(c=>
+      c.name.toLowerCase().includes(t)||
+      (c.area||'').toLowerCase().includes(t)||
+      (c.thana||'').toLowerCase().includes(t)
+    ) : cobblers);
+  };
+
+  window.locateMe = function() {
+    showToast(T[lang].locating);
+    if(!navigator.geolocation){showToast(T[lang].locFail);return;}
+    navigator.geolocation.getCurrentPosition(pos=>{
+      const {latitude:lat,longitude:lng}=pos.coords;
+      if(userMarker) map.removeLayer(userMarker);
+      userMarker=L.circleMarker([lat,lng],{radius:9,fillColor:'#60a5fa',fillOpacity:.9,color:'#fff',weight:2.5})
+        .addTo(map).bindPopup('<b style="font-family:Plus Jakarta Sans,sans-serif;font-size:.88rem">You are here</b>').openPopup();
+      map.setView([lat,lng],15);
+      const sorted=[...cobblers].filter(c=>c.lat&&c.lng).sort((a,b)=>
+        Math.hypot(a.lat-lat,a.lng-lng)-Math.hypot(b.lat-lat,b.lng-lng));
+      renderMarkers(sorted);
+      if(sorted[0]) setTimeout(()=>{map.setView([sorted[0].lat,sorted[0].lng],16); markersLayer[0]?.openPopup();},800);
+    },()=>showToast(T[lang].locFail));
+  };
+
+  /* ── MODAL ────────────────────────────────── */
+  window.openModal = function() {
+    // Auto-request GPS when modal opens
+    gpsLat=null; gpsLng=null;
+    document.getElementById('loc-strip').classList.remove('show');
+    if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(pos=>{
+        gpsLat=pos.coords.latitude;
+        gpsLng=pos.coords.longitude;
+        document.getElementById('loc-strip-text').textContent=T[lang].locStrip;
+        document.getElementById('loc-strip').classList.add('show');
+      },()=>{});
+    }
+    document.getElementById('modal-overlay').classList.add('open');
+  };
+
+  window.closeModal = function() {
+    document.getElementById('modal-overlay').classList.remove('open');
+    resetForm();
+  };
+
+  /* ── PHOTO HANDLING + COMPRESSION ────────── */
+  function compressImage(file) {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          // Max dimension 1200px, keeps aspect ratio
+          const MAX = 1200;
+          let w = img.width, h = img.height;
+          if (w > h && w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+          else if (h > MAX)     { w = Math.round(w * MAX / h); h = MAX; }
+          canvas.width = w; canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          // Convert to webp/jpeg at 75% quality
+          canvas.toBlob((blob) => {
+            resolve(new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' }));
+          }, 'image/jpeg', 0.75);
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function handlePhotos(input) {
+    const files = Array.from(input.files);
+    if (selectedFiles.length + files.length > 2) {
+      showToast(T[lang].toastPhotoErr); input.value = ''; return;
+    }
+    for (const f of files) {
+      if (f.size > 10 * 1024 * 1024) { showToast(T[lang].toastSizeErr); input.value = ''; return; }
+    }
+    selectedFiles = [...selectedFiles, ...files].slice(0, 2);
+    renderPreviews();
+    input.value = '';
+  }
+
+  function renderPreviews() {
+    const wrap = document.getElementById('photo-previews');
+    wrap.innerHTML = '';
+    selectedFiles.forEach((f, i) => {
+      const url = URL.createObjectURL(f);
+      const div = document.createElement('div');
+      div.className = 'photo-preview-item';
+      div.innerHTML = `<img src="${url}"/><button class="photo-remove" onclick="window.removePhoto(${i})">✕</button>`;
+      wrap.appendChild(div);
+    });
+  }
+
+  window.removePhoto = function(i) { selectedFiles.splice(i, 1); renderPreviews(); };
+
+  async function uploadPhoto(file, index, total) {
+    // Compress first
+    const compressed = await compressImage(file);
+    const fd = new FormData();
+    fd.append('file', compressed);
+    fd.append('upload_preset', CLOUDINARY_PRESET);
+    fd.append('folder', 'muchi-koi');
+    const res  = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, { method:'POST', body:fd });
+    const data = await res.json();
+    if (!data.secure_url) throw new Error('Upload failed');
+    const pct = Math.round(((index + 1) / total) * 100);
+    document.getElementById('progress-bar').style.width = pct + '%';
+    document.getElementById('progress-text').textContent = `${pct}%`;
+    return data.secure_url;
+  }
+
+  /* ── SUBMIT ───────────────────────────────── */
+  window.submitCobbler = async function() {
+    const name  = document.getElementById('f-name').value.trim();
+    const phone = document.getElementById('f-phone').value.trim();
+    const area  = document.getElementById('f-area').value.trim();
+    if(!name||!phone||!area){ showToast(T[lang].toastErr); return; }
+
+    const btn = document.getElementById('submit-btn');
+    const spinner = document.getElementById('submit-spinner');
+    btn.disabled=true; spinner.classList.add('show');
+    document.getElementById('submit-text').textContent = T[lang].uploading;
+
+    try {
+      // 1. Upload photos to Cloudinary
+      let photoUrls=[];
+      if(selectedFiles.length>0){
+        document.getElementById('upload-progress').classList.add('show');
+        document.getElementById('progress-bar').style.width='0%';
+        for(let i=0;i<selectedFiles.length;i++){
+          const url = await uploadPhoto(selectedFiles[i], i, selectedFiles.length);
+          photoUrls.push(url);
+        }
+        document.getElementById('upload-progress').classList.remove('show');
+      }
+
+      document.getElementById('submit-text').textContent = T[lang].saving;
+
+      // 2. Determine coordinates — GPS first, fallback to Dhaka center
+      let lat, lng;
+      if (gpsLat && gpsLng) { lat = gpsLat; lng = gpsLng; }
+      else { lat = 23.7806 + (Math.random()-.5)*.05; lng = 90.4193 + (Math.random()-.5)*.05; }
+
+      // 3. Save to Firestore
+      const docData = {
+        name, phone, area,
+        services: document.getElementById('f-services').value.split(',').map(s=>s.trim()).filter(Boolean),
+        workHours: document.getElementById('f-hours').value.trim()||null,
+        workDays:  document.getElementById('f-days').value.trim()||null,
+        photos: photoUrls,
+        lat, lng,
+        rating: null,
+        isNew: true,
+        createdAt: serverTimestamp()
+      };
+      const docRef = await addDoc(collection(db,'cobblers'), docData);
+
+      // 4. Update local state
+      cobblers.unshift({id:docRef.id, ...docData});
+      document.getElementById('stat-cobblers').textContent = cobblers.length;
+      if(map) renderMarkers(cobblers);
+
+      closeModal();
+      showToast(T[lang].toastOk);
+
+    } catch(err) {
+      console.error(err);
+      showToast('Error: '+err.message);
+    } finally {
+      btn.disabled=false; spinner.classList.remove('show');
+      document.getElementById('submit-text').textContent = T[lang].submit;
+      document.getElementById('upload-progress').classList.remove('show');
+    }
+  };
+
+  function resetForm() {
+    ['f-name','f-phone','f-area','f-services','f-hours','f-days'].forEach(id=>document.getElementById(id).value='');
+    selectedFiles=[]; renderPreviews();
+    document.getElementById('loc-strip').classList.remove('show');
+    document.getElementById('upload-progress').classList.remove('show');
+    document.getElementById('progress-bar').style.width='0%';
+  }
+
+  /* ── TOAST ────────────────────────────────── */
+  let toastTimer;
+  function showToast(msg) {
+    const t=document.getElementById('toast');
+    t.textContent=msg; t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer=setTimeout(()=>t.classList.remove('show'),3200);
+  }
+  window.showToast = showToast;
+
+  // Set default language to Bangla on load
+  setLang('bn');
+
+  // ── WIRE ALL BUTTONS INSIDE MODULE ──────────
+  document.getElementById('btn-en').addEventListener('click', ()=>setLang('en'));
+  document.getElementById('btn-bn').addEventListener('click', ()=>setLang('bn'));
+  document.getElementById('find-btn').addEventListener('click', openMap);
+  document.getElementById('add-btn-hero').addEventListener('click', openModal);
+  document.getElementById('back-btn').addEventListener('click', closeMap);
+  document.getElementById('locate-btn').addEventListener('click', locateMe);
+  document.getElementById('add-map-btn').addEventListener('click', openModal);
+  document.getElementById('cancel-btn').addEventListener('click', closeModal);
+  document.getElementById('submit-btn').addEventListener('click', submitCobbler);
+  document.getElementById('f-photos').addEventListener('change', function(){ handlePhotos(this); });
+  document.getElementById('search-bar').addEventListener('input', function(){ filterMarkers(this.value); });
+  document.getElementById('modal-overlay').addEventListener('click', e=>{
+    if(e.target.id==='modal-overlay') closeModal();
+  });
+  // also expose removePhoto for dynamic onclick in previews
+  window.removePhoto = removePhoto;
+</script>
+</body>
+</html>
