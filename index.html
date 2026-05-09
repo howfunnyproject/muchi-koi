@@ -18,12 +18,9 @@
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     body{background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;
-      min-height:100dvh;display:flex;flex-direction:column;overflow-x:hidden;
-      -webkit-font-smoothing:antialiased;gap:0}
-    #app-wrapper{display:flex;flex-direction:column;min-height:100dvh;justify-content:space-between}
-    #content-wrapper{flex:1;display:flex;flex-direction:column}
+      min-height:100dvh;display:flex;flex-direction:column;
+      -webkit-font-smoothing:antialiased}
 
-    /* HEADER */
     header{position:sticky;top:0;z-index:900;height:var(--hh);
       display:flex;align-items:center;justify-content:space-between;
       padding:0 clamp(16px,4vw,40px);background:rgba(8,9,15,.88);
@@ -39,10 +36,9 @@
       font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:.05em;transition:all .2s}
     .lang-btn.active{background:var(--gold);color:#08090f;box-shadow:0 2px 10px rgba(212,149,42,.3)}
 
-    /* HERO */
-    #hero{flex:0 1 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    #hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
       padding:clamp(30px,6vh,60px) clamp(20px,5vw,60px);text-align:center;
-      position:relative;overflow:hidden;min-height:auto}
+      position:relative;overflow:hidden}
     #hero::before{content:'';position:absolute;inset:0;pointer-events:none;
       background:radial-gradient(ellipse 70% 55% at 50% 15%,rgba(212,149,42,.11) 0%,transparent 65%)}
     #hero::after{content:'';position:absolute;inset:0;pointer-events:none;
@@ -60,33 +56,89 @@
     .badge-dot{width:7px;height:7px;background:var(--gold);border-radius:50%;
       animation:pulse 2.2s ease infinite}
     @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(1.6)}}
-    .hero-title{font-family:'Playfair Display',serif;font-size:clamp(2.4rem,8vw,4.4rem);
-      font-weight:700;line-height:1.08;color:var(--text);letter-spacing:-.025em;
-      margin-bottom:18px;animation:fadeUp .65s .1s ease both}
+    
+    .hero-title{
+      font-family:'Playfair Display',serif;
+      font-weight:700;
+      color:var(--text);
+      letter-spacing:-.025em;
+      margin-bottom:18px;
+      animation:fadeUp .65s .1s ease both;
+      font-size:2.8rem;
+      line-height:1.1;
+      min-height:3.3rem;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
     .hero-title em{font-style:italic;color:var(--gold-light)}
-    .hero-title.bn{font-family:'Hind Siliguri',sans-serif;font-size:clamp(2rem,6.5vw,3.6rem);
-      font-weight:600;letter-spacing:-.01em;line-height:1.15}
-    .hero-sub{font-size:clamp(.88rem,2.2vw,1.02rem);color:var(--text2);line-height:1.8;
-      max-width:440px;margin-bottom:36px;animation:fadeUp .65s .2s ease both}
-    .hero-sub.bn{font-family:'Hind Siliguri',sans-serif;font-size:clamp(.95rem,2.5vw,1.08rem);line-height:1.85}
+    .hero-title.bn{
+      font-family:'Hind Siliguri',sans-serif;
+      font-size:2.5rem;
+      font-weight:600;
+      letter-spacing:-.01em;
+      line-height:1.15;
+    }
+    
+    .hero-sub{
+      color:var(--text2);
+      line-height:1.7;
+      max-width:440px;
+      margin-bottom:36px;
+      animation:fadeUp .65s .2s ease both;
+      font-size:.95rem;
+      min-height:3.2rem;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+    }
+    .hero-sub.bn{
+      font-family:'Hind Siliguri',sans-serif;
+    }
+    
     .hero-btns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;animation:fadeUp .65s .3s ease both}
-    .find-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;
-      background:linear-gradient(135deg,#e0a030 0%,#b86c10 100%);color:#060608;border:none;
-      padding:14px 36px;border-radius:50px;min-width:180px;min-height:44px;
-      font-family:'Plus Jakarta Sans',sans-serif;font-size:.95rem;font-weight:700;
-      cursor:pointer;box-shadow:0 8px 28px rgba(212,149,42,.24);
-      transition:transform .22s,filter .22s;position:relative;overflow:hidden}
+    
+    .find-btn,.add-btn-hero{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      border-radius:50px;
+      cursor:pointer;
+      transition:transform .22s,filter .22s;
+      position:relative;
+      overflow:hidden;
+      white-space:nowrap;
+      height:50px;
+      min-width:220px;
+      padding:0 36px;
+      font-size:.92rem;
+      font-weight:700;
+    }
+    
+    .find-btn{
+      background:linear-gradient(135deg,#e0a030 0%,#b86c10 100%);
+      color:#060608;
+      border:none;
+      font-family:'Plus Jakarta Sans',sans-serif;
+      box-shadow:0 8px 28px rgba(212,149,42,.24);
+    }
     .find-btn::before{content:'';position:absolute;inset:0;pointer-events:none;
       background:linear-gradient(160deg,rgba(255,255,255,.2) 0%,transparent 55%)}
     .find-btn:hover{transform:translateY(-3px);filter:brightness(1.07)}
     .find-btn.bn{font-family:'Hind Siliguri',sans-serif}
-    .add-btn-hero{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:transparent;
-      border:1px solid var(--border2);color:var(--text2);
-      padding:14px 36px;border-radius:50px;min-width:180px;min-height:44px;
-      font-family:'Plus Jakarta Sans',sans-serif;font-size:.95rem;
-      font-weight:600;cursor:pointer;transition:all .22s}
+    
+    .add-btn-hero{
+      background:transparent;
+      border:1px solid var(--border2);
+      color:var(--text2);
+      font-family:'Plus Jakarta Sans',sans-serif;
+      font-weight:600;
+    }
     .add-btn-hero:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-2px)}
     .add-btn-hero.bn{font-family:'Hind Siliguri',sans-serif}
+    
     .stats{display:flex;gap:clamp(22px,5vw,56px);margin-top:clamp(40px,6vh,64px);
       padding-top:clamp(22px,4vh,34px);border-top:1px solid var(--border);
       animation:fadeUp .65s .4s ease both}
@@ -98,7 +150,6 @@
     .stat-label.bn{font-family:'Hind Siliguri',sans-serif;text-transform:none;letter-spacing:0;font-size:.78rem}
     @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
-    /* MAP */
     #map-view{display:none;flex-direction:column;height:calc(100dvh - var(--hh))}
     #map-toolbar{display:flex;align-items:center;gap:10px;padding:10px clamp(12px,3vw,20px);
       background:var(--surface);border-bottom:1px solid var(--border);flex-wrap:wrap}
@@ -127,7 +178,6 @@
     .add-map-btn:hover{background:var(--gold);color:#060608}
     #map{flex:1}
 
-    /* POPUP */
     .leaflet-popup-content-wrapper{background:var(--card2) !important;
       border:1px solid var(--border2) !important;border-radius:14px !important;
       box-shadow:0 16px 56px rgba(0,0,0,.75) !important;padding:0 !important}
@@ -158,7 +208,6 @@
       font-family:'Plus Jakarta Sans',sans-serif;font-size:.78rem;font-weight:700;
       text-decoration:none;box-shadow:0 2px 10px rgba(212,149,42,.3)}
 
-    /* MODAL */
     #modal-overlay{display:none;position:fixed;inset:0;background:rgba(4,5,10,.82);
       backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
       z-index:9000;align-items:center;justify-content:center;padding:16px}
@@ -225,7 +274,6 @@
     .spinner.show{display:block}
     @keyframes spin{to{transform:rotate(360deg)}}
 
-    /* TOAST */
     #toast{position:fixed;bottom:clamp(24px,5vh,40px);left:50%;
       transform:translateX(-50%) translateY(12px);background:var(--card2);
       border:1px solid var(--border2);color:var(--text);padding:11px 22px;border-radius:50px;
@@ -234,7 +282,6 @@
       box-shadow:0 8px 32px rgba(0,0,0,.5);max-width:90vw;text-align:center}
     #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-    /* LOADING */
     #loading-overlay{display:none;position:fixed;inset:0;background:rgba(8,9,15,.9);
       z-index:99998;align-items:center;justify-content:center;flex-direction:column;gap:16px}
     #loading-overlay.show{display:flex}
@@ -242,37 +289,60 @@
       border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite}
     .loading-text{color:var(--text2);font-size:.9rem}
 
+    footer{
+      background:var(--bg);
+      border-top:1px solid var(--border);
+      padding:clamp(20px,3vh,28px) clamp(20px,4vw,40px);
+      margin-top:0;
+    }
+    .footer-content{
+      font-size:.88rem;
+      color:var(--text2);
+      line-height:1.75;
+      text-align:center;
+      margin-bottom:12px;
+      font-family:'Plus Jakarta Sans',sans-serif;
+    }
+    .footer-content.bn{
+      font-family:'Hind Siliguri',sans-serif;
+      font-size:.92rem;
+    }
+    .footer-divider{
+      height:1px;
+      background:var(--border);
+      margin:12px auto;
+      max-width:600px;
+    }
+    .footer-developer{
+      font-size:.78rem;
+      color:var(--text3);
+      text-align:center;
+      font-family:'Plus Jakarta Sans',sans-serif;
+    }
+    .footer-developer a{
+      color:var(--gold-light);
+      text-decoration:none;
+      font-weight:600;
+      transition:color .2s;
+    }
+    .footer-developer a:hover{color:var(--gold)}
+
     @media(max-width:480px){
       .form-grid{grid-template-columns:1fr}
       .form-grid .full{grid-column:1}
       .stats{gap:18px}
-      .hero-btns{flex-direction:column;align-items:center;gap:12px}
-      .find-btn,.add-btn-hero{min-width:160px;padding:12px 28px;font-size:.9rem}
+      .hero-btns{flex-direction:column;align-items:stretch}
+      .find-btn,.add-btn-hero{justify-content:center;min-width:100%}
+      footer{padding:18px 20px}
+      .footer-content{font-size:.82rem}
+      .footer-developer{font-size:.72rem}
     }
     .leaflet-control-attribution{background:rgba(8,9,15,.75) !important;color:var(--text3) !important;font-size:.62rem !important}
     .leaflet-control-zoom a{background:var(--card2) !important;color:var(--text) !important;border-color:var(--border2) !important}
-
-    /* FOOTER & CREDITS */
-    footer{background:var(--surface);border-top:1px solid var(--border);padding:clamp(16px,3vw,24px) clamp(16px,4vw,40px);
-      display:flex;flex-direction:column;gap:10px;flex-shrink:0;order:3}
-    .footer-content{font-size:.8rem;color:var(--text2);line-height:1.6;font-family:'Hind Siliguri',sans-serif}
-    .footer-content a{color:var(--gold-light);text-decoration:none;font-weight:500;transition:color .2s}
-    .footer-content a:hover{color:var(--gold)}
-    .footer-divider{height:1px;background:var(--border);margin:6px 0}
-    .footer-developer{font-size:.75rem;color:var(--text3);text-align:center;font-family:'Plus Jakarta Sans',sans-serif}
-    .footer-developer a{color:var(--gold-light);text-decoration:none;font-weight:600;transition:color .2s}
-    .footer-developer a:hover{color:var(--gold)}
-
-    @media(max-width:480px){
-      footer{padding:14px 16px;gap:8px}
-      .footer-content{font-size:.75rem}
-      .footer-developer{font-size:.7rem}
-    }
   </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header>
   <div class="logo">
     <span class="logo-name">Muchi Koi</span>
@@ -284,7 +354,6 @@
   </div>
 </header>
 
-<!-- HERO -->
 <section id="hero">
   <div class="hero-inner">
     <div class="hero-badge"><span class="badge-dot"></span><span id="badge-text">লাইভ · ঢাকা</span></div>
@@ -302,7 +371,14 @@
   </div>
 </section>
 
-<!-- MAP VIEW -->
+<footer>
+  <div class="footer-content bn" id="footer-content">এটি একটি কমিউনিটি-চালিত প্রকল্প। মুচিদের তালিকা বৃদ্ধিতে সাহায্য করুন এবং আপনার এলাকার মুচি যোগ করুন।</div>
+  <div class="footer-divider"></div>
+  <div class="footer-developer">
+    Developed with 💛 by <a href="https://github.com/howfunnyproject" target="_blank">Shakib</a>
+  </div>
+</footer>
+
 <section id="map-view">
   <div id="map-toolbar">
     <button class="back-btn" id="back-btn">← <span id="back-text">ফিরে যান</span></button>
@@ -313,7 +389,6 @@
   <div id="map"></div>
 </section>
 
-<!-- MODAL -->
 <div id="modal-overlay">
   <div class="modal">
     <div class="modal-title bn" id="modal-title">মুচির তথ্য যোগ করুন</div>
@@ -376,7 +451,6 @@
   <div class="loading-text" id="loading-text">লোড হচ্ছে…</div>
 </div>
 
-<!-- Scripts -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -384,6 +458,7 @@
 
 <script>
 window.onload = function() {
+
 firebase.initializeApp({
   apiKey:"AIzaSyDOSUl4rr6SjJmnjdTHYmB2gzsvTpdEPUQ",
   authDomain:"muchi-koi.firebaseapp.com",
@@ -396,15 +471,12 @@ firebase.initializeApp({
 firebase.analytics();
 var db = firebase.firestore();
 
-// ── CLOUDINARY ────────────────────────────
 var CL_CLOUD  = "dd2znqqod";
 var CL_PRESET = "muchi_koi_upload";
 
-// ── STATE ─────────────────────────────────
 var cobblers = [], map, markersLayer = [], userMarker = null;
 var lang = 'bn', gpsLat = null, gpsLng = null, selectedFiles = [];
 
-// ── TRANSLATIONS ──────────────────────────
 var T = {
   en:{
     logoTag:"Find a cobbler anytime", badge:"Live · Dhaka",
@@ -431,7 +503,8 @@ var T = {
     toastSizeErr:"Each photo must be under 10MB.",
     uploading:"Uploading photos…", saving:"Saving…",
     loadingTxt:"Loading cobblers…",
-    footerText:"This is a community-driven project. Help grow our cobbler list and add cobblers from your area."
+    footerText:"This is a community-driven project. Help grow our cobbler list and add cobblers from your area.",
+    footerCls:"footer-content"
   },
   bn:{
     logoTag:"যেকোনো সময় মুচি খুঁজুন", badge:"লাইভ · ঢাকা",
@@ -458,11 +531,11 @@ var T = {
     toastSizeErr:"প্রতিটি ছবি ১০MB-এর কম হতে হবে।",
     uploading:"ছবি আপলোড হচ্ছে…", saving:"সংরক্ষণ হচ্ছে…",
     loadingTxt:"মুচির তালিকা লোড হচ্ছে…",
-    footerText:"এটি একটি কমিউনিটি-চালিত প্রকল্প। মুচিদের তালিকা বৃদ্ধিতে সাহায্য করুন এবং আপনার এলাকার মুচি যোগ করুন।"
+    footerText:"এটি একটি কমিউনিটি-চালিত প্রকল্প। মুচিদের তালিকা বৃদ্ধিতে সাহায্য করুন এবং আপনার এলাকার মুচি যোগ করুন।",
+    footerCls:"footer-content bn"
   }
 };
 
-// ── HELPER ────────────────────────────────
 function el(id){ return document.getElementById(id); }
 var _toastTimer;
 function showToast(msg){
@@ -471,7 +544,6 @@ function showToast(msg){
   _toastTimer=setTimeout(function(){ t.classList.remove('show'); }, 3200);
 }
 
-// ── LANGUAGE ──────────────────────────────
 function setLang(l){
   lang=l;
   el('btn-en').classList.toggle('active', l==='en');
@@ -510,10 +582,11 @@ function setLang(l){
   el('submit-text').textContent = t.submit;
   el('search-bar').placeholder  = t.searchPH;
   el('loading-text').textContent= t.loadingTxt;
+  
   el('footer-content').textContent = t.footerText;
+  el('footer-content').className   = t.footerCls;
 }
 
-// ── LOAD COBBLERS ─────────────────────────
 function loadCobblers(){
   el('loading-overlay').classList.add('show');
   db.collection('cobblers').orderBy('createdAt','desc').get()
@@ -525,9 +598,9 @@ function loadCobblers(){
     .finally(function(){ el('loading-overlay').classList.remove('show'); });
 }
 
-// ── MAP ───────────────────────────────────
 function openMap(){
   el('hero').style.display     = 'none';
+  document.querySelector('footer').style.display = 'none';
   el('map-view').style.display = 'flex';
   if(!map){
     map = L.map('map').setView([23.7806,90.4193],12);
@@ -537,7 +610,6 @@ function openMap(){
     }).addTo(map);
     loadCobblers();
     setTimeout(function(){ map.invalidateSize(); }, 200);
-    // re-render when cobblers load
     var checkInterval = setInterval(function(){
       if(cobblers.length > 0){ renderMarkers(cobblers); clearInterval(checkInterval); }
     }, 300);
@@ -547,6 +619,7 @@ function openMap(){
 function closeMap(){
   el('map-view').style.display = 'none';
   el('hero').style.display     = 'flex';
+  document.querySelector('footer').style.display = 'block';
 }
 
 function pinIcon(hi){
@@ -626,7 +699,6 @@ function locateMe(){
   }, function(){ showToast(T[lang].locFail); });
 }
 
-// ── MODAL ─────────────────────────────────
 function openModal(){
   gpsLat=null; gpsLng=null;
   el('loc-strip').classList.remove('show');
@@ -645,7 +717,6 @@ function closeModal(){
   resetForm();
 }
 
-// ── PHOTOS ────────────────────────────────
 function compressImage(file){
   return new Promise(function(resolve){
     var reader=new FileReader();
@@ -711,7 +782,6 @@ function uploadPhoto(file,index,total){
   });
 }
 
-// ── SUBMIT ────────────────────────────────
 function submitCobbler(){
   var name=el('f-name').value.trim();
   var phone=el('f-phone').value.trim();
@@ -774,7 +844,6 @@ function resetForm(){
   el('progress-bar').style.width='0%';
 }
 
-// ── EVENT LISTENERS ───────────────────────
 el('btn-en').addEventListener('click',   function(){ setLang('en'); });
 el('btn-bn').addEventListener('click',   function(){ setLang('bn'); });
 el('find-btn').addEventListener('click', openMap);
@@ -790,20 +859,9 @@ el('modal-overlay').addEventListener('click', function(e){
   if(e.target.id==='modal-overlay') closeModal();
 });
 
-// ── INIT ──────────────────────────────────
 loadCobblers();
 
-}; // end window.onload
+};
 </script>
-
-<!-- FOOTER -->
-<footer>
-  <div class="footer-content" id="footer-content">এটি একটি কমিউনিটি-চালিত প্রকল্প। মুচিদের তালিকা বৃদ্ধিতে সাহায্য করুন এবং আপনার এলাকার মুচি যোগ করুন।</div>
-  <div class="footer-divider"></div>
-  <div class="footer-developer">
-    Developed by <a href="https://shakib-mahamud.vercel.app/" target="_blank" rel="noopener noreferrer">Shakib Mahamud</a>
-  </div>
-</footer>
-
 </body>
 </html>
