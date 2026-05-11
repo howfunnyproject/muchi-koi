@@ -1,2 +1,0 @@
-Place your favicon.ico here.
-You can generate one at https://favicon.io/
