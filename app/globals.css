@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #FAF8F5; -webkit-font-smoothing: antialiased; }
+
+/* Leaflet map needs a set height */
+.leaflet-container { width: 100%; height: 100%; }
+
+/* Keyframes used by inline-styled elements */
+@keyframes fadeIn  { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse   { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+@keyframes spin    { to { transform: rotate(360deg); } }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+.hero-animate   { animation: fadeIn 0.7s ease both; }
+.hero-animate-2 { animation: fadeIn 0.7s 0.12s ease both; }
+.hero-animate-3 { animation: fadeIn 0.7s 0.24s ease both; }
+.hero-animate-4 { animation: fadeIn 0.7s 0.36s ease both; }
+.hero-animate-5 { animation: fadeIn 0.7s 0.48s ease both; }
+.card-animate   { animation: fadeIn 0.4s ease both; }
+
+/* Leaflet popup custom styling */
+.leaflet-popup-content-wrapper {
+  background: #FFFFFF !important;
+  border: 1px solid #E8DDD0 !important;
+  border-radius: 14px !important;
+  box-shadow: 0 8px 32px rgba(74,52,40,0.15) !important;
+  padding: 0 !important;
+}
+.leaflet-popup-tip { background: #FFFFFF !important; }
+.leaflet-popup-content { margin: 0 !important; min-width: 220px; max-width: 280px; }
+.leaflet-popup-close-button { color: #8B7355 !important; font-size: 1rem !important; top: 10px !important; right: 12px !important; }
+
+/* Leaflet zoom button overrides */
+.leaflet-control-zoom a {
+  background: #FFFFFF !important;
+  color: #4A3428 !important;
+  border-color: #E0D0BC !important;
+}
+.leaflet-control-zoom a:hover { background: #F5EBDD !important; }
+.leaflet-control-attribution {
+  background: rgba(250,248,245,0.8) !important;
+  color: #8B7355 !important;
+  font-size: 0.6rem !important;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: #D4C4A8; border-radius: 4px; }
